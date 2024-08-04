@@ -7,11 +7,11 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Cal
 import threading
 import asyncio
 
-# Load environment variables from .env file
+
 load_dotenv()
 BOT_API_KEY = os.getenv("BOT_API_KEY")
 
-def fetch_news(query=None):
+def fetch_latest_news(query=None):
     feed_url = "https://feeds.feedburner.com/ndtvnews-latest"
     feed = feedparser.parse(feed_url)
     news_items = []
@@ -19,7 +19,7 @@ def fetch_news(query=None):
     for entry in feed.entries:
         if query is None or query.lower() in entry.title.lower():
             news_items.append(f"{entry.title}\n{entry.link}")
-        if len(news_items) >= 7:  # Limit to the latest 7 news items
+        if len(news_items) >= 7:  
             break
 
     if not news_items:
@@ -27,16 +27,15 @@ def fetch_news(query=None):
 
     return "\n\n".join(news_items)
 
-# Telegram bot handlers
+
 async def start(update: Update, context: CallbackContext):
     await update.message.reply_text('Hi! I can provide you with the latest news from NDTV. Type any keyword to get related news.')
 
 async def handle_message(update: Update, context: CallbackContext):
     query = update.message.text
-    news = fetch_news(query)
+    news = fetch_latest_news(query)
     await update.message.reply_text(news)
 
-# Run the Telegram bot
 async def run_bot():
     app = ApplicationBuilder().token(BOT_API_KEY).build()
 
@@ -52,9 +51,9 @@ def start_bot():
     bot_thread.start()
     return bot_thread
 
-# Streamlit interface
+
 st.title("NDTV News Telegram Bot")
-st.write("This app allows you to manage a Telegram bot that fetches the latest news from NDTV.")
+st.write("This application allows you to manage a Telegram bot that fetches the latest news from NDTV.")
 
 if st.button('Start Bot'):
     bot_thread = start_bot()
@@ -63,7 +62,7 @@ if st.button('Start Bot'):
 query = st.text_input("Enter keyword for news:", "")
 if st.button('Fetch News'):
     if query:
-        news = fetch_news(query)
+        news = fetch_latest_news(query)
         st.write(news)
     else:
         st.write("Please enter a keyword to fetch news.")
