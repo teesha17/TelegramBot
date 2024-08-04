@@ -1,4 +1,3 @@
-##'7305419410:AAEdxWY_Kau1UKq4JqfxNKsSNlw6jUmRg8o'
 from dotenv import load_dotenv
 load_dotenv()
 import os
